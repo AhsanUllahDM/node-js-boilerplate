@@ -8,7 +8,7 @@ describe("Admin Login", function () {
   it("only Password is passed", async () => {
     const resp = await request
       .post("/api/v1/admin/login")
-      .send({ password: "Password@1" })
+      .send({ password: "Password" })
     expect(resp.statusCode).to.be.equal(status.BAD_REQUEST)
     expect(resp.body.data.message).to.be.equal("Email is a required field")
   })
@@ -16,7 +16,7 @@ describe("Admin Login", function () {
   it("only Email is passed", async () => {
     const resp = await request
       .post("/api/v1/admin/login")
-      .send({ email: "abdullahzafar17@gmail.com" })
+      .send({ email: "example@gmail.com" })
     expect(resp.statusCode).to.be.equal(status.BAD_REQUEST)
     expect(resp.body.data.message).to.be.equal("Password is a required field")
   })
@@ -24,7 +24,7 @@ describe("Admin Login", function () {
   it("Email is passed with empty Password Field", async () => {
     const resp = await request
       .post("/api/v1/admin/login")
-      .send({ email: "abdullahzafar17@gmail.com", password: "" })
+      .send({ email: "example@gmail.com", password: "" })
     expect(resp.body.data.message).to.be.equal("Password can not be empty")
     expect(resp.statusCode).to.be.equal(status.BAD_REQUEST)
   })
@@ -32,7 +32,7 @@ describe("Admin Login", function () {
   it("Password is passed with empty Email Field", async () => {
     const resp = await request
       .post("/api/v1/admin/login")
-      .send({ email: "", password: "Password@1" })
+      .send({ email: "", password: "Password" })
     expect(resp.body.data.message).to.be.equal("Email cannont be empty")
     expect(resp.statusCode).to.be.equal(status.BAD_REQUEST)
   })
@@ -48,7 +48,7 @@ describe("Admin Login", function () {
   it("Wrong Password", async () => {
     const resp = await request
       .post("/api/v1/admin/login")
-      .send({ email: "abdullahzafar17@gmail.com", password: "Password@" })
+      .send({ email: "example@gmail.com", password: "Password@" })
     expect(resp.statusCode).to.be.equal(status.BAD_REQUEST)
     expect(resp.body.data.message).to.be.equal("Credentials not valid")
   })
@@ -56,7 +56,7 @@ describe("Admin Login", function () {
   it("Worng Email", async () => {
     const resp = await request
       .post("/api/v1/admin/login")
-      .send({ email: "abdullahzafar1@gmail.com", password: "Password@1" })
+      .send({ email: "example@gmail.com", password: "Passwor" })
     expect(resp.statusCode).to.be.equal(status.BAD_REQUEST)
     expect(resp.body.data.message).to.be.equal("Credentials not valid")
   })
@@ -65,7 +65,7 @@ describe("Admin Login", function () {
     await AddLoginData()
     const resp = await request
       .post("/api/v1/admin/login")
-      .send({ email: "abdullahzafar17@gmail.com", password: "Password@1" })
+      .send({ email: "example@gmail.com", password: "Password" })
     token = resp.body.data.token
     expect(resp.statusCode).to.be.equal(status.OK)
     expect(resp.body.data.token).to.be.a("string")
@@ -78,7 +78,7 @@ describe("Admin Change Password", function () {
   it("1: No token Passed", async () => {
     const resp = await request
       .put("/api/v1/admin/passwordUpdate")
-      .send({ currentPassword: "Password@1", newPassword: "jkdfkf" })
+      .send({ currentPassword: "current Password", newPassword: "new Password" })
     expect(resp.statusCode).to.be.equal(status.BAD_REQUEST)
     expect(resp.body.data.message).to.be.equal("Token not valid")
   })
@@ -87,7 +87,7 @@ describe("Admin Change Password", function () {
     const resp = await request
       .put("/api/v1/admin/passwordUpdate")
       .set({ Authorization: `Bearer ${token}` })
-      .send({ currentPassword: "Password@1" })
+      .send({ currentPassword: "current Password" })
     expect(resp.statusCode).to.be.equal(status.BAD_REQUEST)
     expect(resp.body.data.message).to.be.equal(
       "New Password is a required field"
@@ -98,7 +98,7 @@ describe("Admin Change Password", function () {
     const resp = await request
       .put("/api/v1/admin/passwordUpdate")
       .set({ Authorization: `Bearer ${token}` })
-      .send({ currentPassword: "Password@1", newPassword: "" })
+      .send({ currentPassword: "current Password", newPassword: "" })
     expect(resp.statusCode).to.be.equal(status.BAD_REQUEST)
     expect(resp.body.data.message).to.be.equal("New Password can not be empty")
   })
@@ -107,7 +107,7 @@ describe("Admin Change Password", function () {
     const resp = await request
       .put("/api/v1/admin/passwordUpdate")
       .set({ Authorization: `Bearer ${token}` })
-      .send({ currentPassword: "Password@1", newPassword: "12345" })
+      .send({ currentPassword: "current Password", newPassword: "new  Password" })
     expect(resp.statusCode).to.be.equal(status.BAD_REQUEST)
     expect(resp.body.data.message).to.be.equal(
       "Password length must be at least 8 characters long"
@@ -118,7 +118,7 @@ describe("Admin Change Password", function () {
     const resp = await request
       .put("/api/v1/admin/passwordUpdate")
       .set({ Authorization: `Bearer ${token}` })
-      .send({ currentPassword: "Password@1", newPassword: "12345678909876543" })
+      .send({ currentPassword: "current Password", newPassword: "new Password" })
     expect(resp.statusCode).to.be.equal(status.BAD_REQUEST)
     expect(resp.body.data.message).to.be.equal(
       "length must be less than or equal to 16 characters long"
@@ -129,7 +129,7 @@ describe("Admin Change Password", function () {
     const resp = await request
       .put("/api/v1/admin/passwordUpdate")
       .set({ Authorization: `Bearer ${token}` })
-      .send({ newPassword: "1234567890987" })
+      .send({ newPassword: "new Password" })
     expect(resp.statusCode).to.be.equal(status.BAD_REQUEST)
     expect(resp.body.data.message).to.be.equal(
       "Current Password is a required field"
@@ -140,7 +140,7 @@ describe("Admin Change Password", function () {
     const resp = await request
       .put("/api/v1/admin/passwordUpdate")
       .set({ Authorization: `Bearer ${token}` })
-      .send({ currentPassword: "", newPassword: "asdf1234" })
+      .send({ currentPassword: "current Password", newPassword: "new  Password" })
     expect(resp.statusCode).to.be.equal(status.BAD_REQUEST)
     expect(resp.body.data.message).to.be.equal(
       "Current Password can not be empty"
@@ -151,7 +151,7 @@ describe("Admin Change Password", function () {
     const resp = await request
       .put("/api/v1/admin/passwordUpdate")
       .set({ Authorization: `Bearer ${token}` })
-      .send({ currentPassword: "asdf12", newPassword: "123456789" })
+      .send({ currentPassword: "your password", newPassword: "your new password" })
     expect(resp.statusCode).to.be.equal(status.BAD_REQUEST)
     expect(resp.body.data.message).to.be.equal(
       "Password length must be at least 8 characters long"
@@ -163,8 +163,8 @@ describe("Admin Change Password", function () {
       .put("/api/v1/admin/passwordUpdate")
       .set({ Authorization: `Bearer ${token}` })
       .send({
-        currentPassword: "Password@112345678",
-        newPassword: "1234567890"
+        currentPassword: "your password",
+        newPassword: "your new password"
       })
     expect(resp.statusCode).to.be.equal(status.BAD_REQUEST)
     expect(resp.body.data.message).to.be.equal(
@@ -176,7 +176,7 @@ describe("Admin Change Password", function () {
     const resp = await request
       .put("/api/v1/admin/passwordUpdate")
       .set({ Authorization: `Bearer ${token}` })
-      .send({ currentPassword: "Password@", newPassword: "asdf12345" })
+      .send({ currentPassword: "your  password", newPassword: "your new password" })
     expect(resp.statusCode).to.be.equal(status.BAD_REQUEST)
     expect(resp.body.data.message).to.be.equal("Credentials not valid")
   })
@@ -185,7 +185,7 @@ describe("Admin Change Password", function () {
     const resp = await request
       .put("/api/v1/admin/passwordUpdate")
       .set({ Authorization: `Bearer ${token}` })
-      .send({ currentPassword: "Password@1", newPassword: "asdf1234" })
+      .send({ currentPassword: "your new password", newPassword: "your new password" })
     expect(resp.statusCode).to.be.equal(status.OK)
     expect(resp.body.data).to.be.a("object")
     expect(resp.body.data.user).to.be.a("object")
@@ -210,7 +210,7 @@ describe("Forget Password", function () {
   it("Wrong Email Passed", async () => {
     const resp = await request
       .post("/api/v1/admin/forgetPassword")
-      .send({ email: "abdullahzafar17" })
+      .send({ email: "example@gmail.com" })
     expect(resp.statusCode).to.be.equal(status.BAD_REQUEST)
     expect(resp.body.data.message).to.be.equal("Enter a valid email")
   })
@@ -218,7 +218,7 @@ describe("Forget Password", function () {
   it("Email Successful ", async () => {
     const resp = await request
       .post("/api/v1/admin/forgetPassword")
-      .send({ email: "abdullahzafar17@gmail.com" })
+      .send({ email: "example@gmail.com" })
     expect(resp.statusCode).to.be.equal(status.OK)
     expect(resp.body.data.email).to.be.a("string")
     expect(resp.body.data.token).to.be.a("string")
@@ -239,7 +239,7 @@ describe("Reset Password", function () {
   it("Empty NewPassword Field with no token field", async () => {
     const resp = await request
       .put("/api/v1/admin/resetPassword")
-      .send({ newPassword: "abdullah" })
+      .send({ newPassword: "your  password" })
     expect(resp.statusCode).to.be.equal(status.BAD_REQUEST)
     expect(resp.body.data.message).to.be.equal("token is a required field")
   })
@@ -257,7 +257,7 @@ describe("Reset Password", function () {
   it("4: Token field Passed, MIN(8) New Password Filed", async () => {
     const resp = await request
       .put("/api/v1/admin/resetPassword")
-      .send({ newPassword: "Passw", token: "12345" })
+      .send({ newPassword: "your new password", token: "12345" })
     expect(resp.statusCode).to.be.equal(status.BAD_REQUEST)
     expect(resp.body.data.message).to.be.equal(
       "Password length must be at least 8 characters long"
@@ -267,7 +267,7 @@ describe("Reset Password", function () {
   it("5: Token filed Passed, MAX(16) New Password Filed", async () => {
     const resp = await request
       .put("/api/v1/admin/resetPassword")
-      .send({ newPassword: "Password@12345678", token: "12345678909876543" })
+      .send({ newPassword: "your password", token: "12345678" })
     expect(resp.statusCode).to.be.equal(status.BAD_REQUEST)
     expect(resp.body.data.message).to.be.equal(
       "length must be less than or equal to 16 characters long"
@@ -277,7 +277,7 @@ describe("Reset Password", function () {
   it("Token Not Valid", async () => {
     const resp = await request
       .put("/api/v1/admin/resetPassword")
-      .send({ newPassword: "Password@1", token: "12345678909876543" })
+      .send({ newPassword: "your new password", token: "12345678909876543" })
     expect(resp.statusCode).to.be.equal(status.BAD_REQUEST)
     expect(resp.body.data.message).to.be.equal("Token not valid")
   })
@@ -285,7 +285,7 @@ describe("Reset Password", function () {
   it("Password Reset Successful", async () => {
     const resp = await request
       .put("/api/v1/admin/resetPassword")
-      .send({ newPassword: "Password@1", token: token })
+      .send({ newPassword: "your  password", token: token })
     expect(resp.body.message).to.be.equal("Password updated successfully")
     expect(resp.body.success).to.be.a("boolean")
   })
